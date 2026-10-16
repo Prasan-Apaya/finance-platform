@@ -58,7 +58,7 @@ public class FinanceService {
 	@Transactional(readOnly = true)
 	public List<CategoryResponse> getCategories(Long userId) {
 		requireUser(userId);
-		return categoryRepository.findAllByUser_IdOrderByNameAsc(userId).stream()
+		return categoryRepository.findAllByUserIdOrderByNameAsc(userId).stream()
 				.map(this::toCategoryResponse).toList();
 	}
 
@@ -66,7 +66,7 @@ public class FinanceService {
 	public CategoryResponse createCategory(Long userId, CategoryRequest request) {
 		User user = requireUser(userId);
 		String name = request.name().trim();
-		if (categoryRepository.existsByUser_IdAndNameIgnoreCase(userId, name)) {
+		if (categoryRepository.existsByUserIdAndNameIgnoreCase(userId, name)) {
 			throw new IllegalArgumentException("A category with this name already exists");
 		}
 		return toCategoryResponse(categoryRepository.save(new Category(user, name)));
@@ -77,7 +77,7 @@ public class FinanceService {
 		Category category = requireCategory(userId, id);
 		String name = request.name().trim();
 		if (!category.getName().equalsIgnoreCase(name)
-				&& categoryRepository.existsByUser_IdAndNameIgnoreCase(userId, name)) {
+				&& categoryRepository.existsByUserIdAndNameIgnoreCase(userId, name)) {
 			throw new IllegalArgumentException("A category with this name already exists");
 		}
 		category.setName(name);
@@ -87,7 +87,7 @@ public class FinanceService {
 	@Transactional
 	public void deleteCategory(Long userId, Long id) {
 		Category category = requireCategory(userId, id);
-		if (transactionRepository.existsByCategory_Id(id) || budgetRepository.existsByCategory_Id(id)) {
+		if (transactionRepository.existsByCategoryId(id) || budgetRepository.existsByCategoryId(id)) {
 			throw new IllegalArgumentException("Cannot delete a category used by a transaction or budget");
 		}
 		categoryRepository.delete(category);
@@ -97,9 +97,9 @@ public class FinanceService {
 	public List<TransactionResponse> getTransactions(Long userId, Optional<YearMonth> month) {
 		requireUser(userId);
 		List<Transaction> transactions = month
-				.map(value -> transactionRepository.findAllByUser_IdAndDateBetweenOrderByDateDescIdDesc(
+				.map(value -> transactionRepository.findAllByUserIdAndDateBetweenOrderByDateDescIdDesc(
 						userId, value.atDay(1), value.atEndOfMonth()))
-				.orElseGet(() -> transactionRepository.findAllByUser_IdOrderByDateDescIdDesc(userId));
+				.orElseGet(() -> transactionRepository.findAllByUserIdOrderByDateDescIdDesc(userId));
 		return transactions.stream().map(this::toTransactionResponse).toList();
 	}
 
@@ -185,8 +185,8 @@ public class FinanceService {
 	public List<BudgetResponse> getBudgets(Long userId, Optional<YearMonth> month) {
 		requireUser(userId);
 		List<Budget> budgets = month
-				.map(value -> budgetRepository.findAllByUser_IdAndMonthOrderByCategory_NameAsc(userId, value))
-				.orElseGet(() -> budgetRepository.findAllByUser_IdOrderByMonthDescCategory_NameAsc(userId));
+				.map(value -> budgetRepository.findAllByUserIdAndMonthOrderByCategoryNameAsc(userId, value))
+				.orElseGet(() -> budgetRepository.findAllByUserIdOrderByMonthDescCategoryNameAsc(userId));
 		return budgets.stream().map(this::toBudgetResponse).toList();
 	}
 
@@ -194,7 +194,7 @@ public class FinanceService {
 	public BudgetResponse createBudget(Long userId, BudgetRequest request) {
 		User user = requireUser(userId);
 		Category category = requireCategory(userId, request.categoryId());
-		if (budgetRepository.findAllByUser_IdAndMonthOrderByCategory_NameAsc(userId, request.month())
+		if (budgetRepository.findAllByUserIdAndMonthOrderByCategoryNameAsc(userId, request.month())
 				.stream().anyMatch(budget -> budget.getCategory().getId().equals(category.getId()))) {
 			throw new IllegalArgumentException("A budget already exists for this category and month");
 		}
@@ -207,7 +207,7 @@ public class FinanceService {
 		Budget budget = requireBudget(userId, id);
 		Category category = requireCategory(userId, request.categoryId());
 		boolean duplicate = budgetRepository
-				.findAllByUser_IdAndMonthOrderByCategory_NameAsc(userId, request.month()).stream()
+				.findAllByUserIdAndMonthOrderByCategoryNameAsc(userId, request.month()).stream()
 				.anyMatch(existing -> !existing.getId().equals(id)
 						&& existing.getCategory().getId().equals(category.getId()));
 		if (duplicate) {
@@ -228,9 +228,9 @@ public class FinanceService {
 	public BudgetStatusResponse getBudgetStatus(Long userId, YearMonth month) {
 		requireUser(userId);
 		List<Budget> budgets = budgetRepository
-				.findAllByUser_IdAndMonthOrderByCategory_NameAsc(userId, month);
+				.findAllByUserIdAndMonthOrderByCategoryNameAsc(userId, month);
 		Map<Long, BigDecimal> spentByCategory = new HashMap<>();
-		transactionRepository.findAllByUser_IdAndDateBetweenAndType(userId, month.atDay(1),
+		transactionRepository.findAllByUserIdAndDateBetweenAndType(userId, month.atDay(1),
 				month.atEndOfMonth(), TransactionType.EXPENSE).forEach(transaction ->
 						spentByCategory.merge(transaction.getCategory().getId(), transaction.getAmount(),
 								BigDecimal::add));
@@ -253,7 +253,7 @@ public class FinanceService {
 	public SummaryResponse getSummary(Long userId, YearMonth month) {
 		requireUser(userId);
 		List<Transaction> transactions = transactionRepository
-				.findAllByUser_IdAndDateBetweenOrderByDateDescIdDesc(
+				.findAllByUserIdAndDateBetweenOrderByDateDescIdDesc(
 						userId, month.atDay(1), month.atEndOfMonth());
 		BigDecimal income = transactions.stream()
 				.filter(transaction -> transaction.getType() == TransactionType.INCOME)
@@ -271,17 +271,17 @@ public class FinanceService {
 	}
 
 	private Category requireCategory(Long userId, Long categoryId) {
-		return categoryRepository.findByIdAndUser_Id(categoryId, userId)
+		return categoryRepository.findByIdAndUserId(categoryId, userId)
 				.orElseThrow(() -> new ResourceNotFoundException("Category not found: " + categoryId));
 	}
 
 	private Transaction requireTransaction(Long userId, Long id) {
-		return transactionRepository.findByIdAndUser_Id(id, userId)
+		return transactionRepository.findByIdAndUserId(id, userId)
 				.orElseThrow(() -> new ResourceNotFoundException("Transaction not found: " + id));
 	}
 
 	private Budget requireBudget(Long userId, Long id) {
-		return budgetRepository.findByIdAndUser_Id(id, userId)
+		return budgetRepository.findByIdAndUserId(id, userId)
 				.orElseThrow(() -> new ResourceNotFoundException("Budget not found: " + id));
 	}
 

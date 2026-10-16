@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.YearMonth;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -16,8 +17,7 @@ import jakarta.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "budgets", uniqueConstraints = {
-		@UniqueConstraint(name = "uk_budgets_user_category_month",
-				columnNames = { "user_id", "category_id", "month" })
+		@UniqueConstraint(name = "uk_budgets_user_category_month", columnNames = { "user_id", "category_id", "month" })
 })
 public class Budget {
 
@@ -33,7 +33,8 @@ public class Budget {
 	@JoinColumn(name = "category_id", nullable = false)
 	private Category category;
 
-	@Column(nullable = false)
+	@Column(nullable = false, length = 7)
+	@Convert(converter = YearMonthConverter.class)
 	private YearMonth month;
 
 	@Column(name = "limit_amount", nullable = false, precision = 19, scale = 2)
