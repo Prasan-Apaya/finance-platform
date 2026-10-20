@@ -4,9 +4,10 @@ import { authApi } from "../api/authApi";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
-    username: "",
+    email: "",
     password: "",
     confirmPassword: "",
+    displayName: "",
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -22,10 +23,16 @@ const RegisterPage = () => {
     }
 
     try {
-      await authApi.register(formData);
+      const payload = {
+        email: formData.email,
+        password: formData.password,
+        displayName: formData.displayName || null
+      };
+      await authApi.register(payload);
       navigate("/login");
     } catch (err) {
-      setError("Registration failed");
+      const backendMessage = err.response?.data?.message || "Registration failed";
+      setError(backendMessage);
     }
   };
 
@@ -74,13 +81,13 @@ const RegisterPage = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-[12.5px] font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
-              Username
+              Email
             </label>
             <input
               type="text"
-              value={formData.username}
+              value={formData.email}
               onChange={(e) =>
-                setFormData({ ...formData, username: e.target.value })
+                setFormData({ ...formData, email: e.target.value })
               }
               required
               className="w-full px-3.5 py-[11px] border border-gray-300 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition hover:border-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
@@ -158,10 +165,18 @@ const RegisterPage = () => {
             </div>
             {/* Strength Bars */}
             <div className="flex gap-1.5 mt-2.5">
-              <div className={`flex-1 h-1.5 rounded-full transition-colors duration-200 ${getBarColor(0)}`} />
-              <div className={`flex-1 h-1.5 rounded-full transition-colors duration-200 ${getBarColor(1)}`} />
-              <div className={`flex-1 h-1.5 rounded-full transition-colors duration-200 ${getBarColor(2)}`} />
-              <div className={`flex-1 h-1.5 rounded-full transition-colors duration-200 ${getBarColor(3)}`} />
+              <div
+                className={`flex-1 h-1.5 rounded-full transition-colors duration-200 ${getBarColor(0)}`}
+              />
+              <div
+                className={`flex-1 h-1.5 rounded-full transition-colors duration-200 ${getBarColor(1)}`}
+              />
+              <div
+                className={`flex-1 h-1.5 rounded-full transition-colors duration-200 ${getBarColor(2)}`}
+              />
+              <div
+                className={`flex-1 h-1.5 rounded-full transition-colors duration-200 ${getBarColor(3)}`}
+              />
             </div>
 
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5">

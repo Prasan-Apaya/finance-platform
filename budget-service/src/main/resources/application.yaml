@@ -19,7 +19,7 @@ spring:
         format_sql: true
 jwt:
   auth:
-    secret-key: your-256-bit-secret-key-base64-encoded-here
+    secret-key: ${JWT_SECRET}
     expiration-ms: 86400000  # 24 hours
     issuer: platform-service
 

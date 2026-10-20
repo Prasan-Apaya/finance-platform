@@ -36,10 +36,12 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<UserResponse> login(@Valid @RequestBody LoginRequest authRequest) {
+        System.out.println("HIT LOGIN CONTROLLER WITH EMAIL: " + authRequest.email());
         User user = userRepository.findByEmail(authRequest.email())
                 .orElseThrow(() -> new RuntimeException("Invalid credentials"));
-
+        System.out.println("FOUND USER: " + user.getEmail() + ", HASH: " + user.getPasswordHash());
         if (!passwordEncoder.matches(authRequest.password(), user.getPasswordHash())) {
+            System.out.println("PASSWORD MATCH FAILED!");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 

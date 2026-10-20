@@ -5,7 +5,7 @@ import { useAuth } from "../auth/AuthContext";
 
 const LoginPage = () => {
   const [credentials, setCredentials] = useState({
-    username: "",
+    email: "",
     password: "",
   });
   const [error, setError] = useState("");
@@ -14,11 +14,15 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    console.log("SUBMITTING CREDENTIALS:", credentials);
     try {
       const response = await authApi.login(credentials);
+      console.log("FULL BACKEND RESPONSE:", response.data);
       login(response.data.token, response.data.username);
       navigate("/dashboard");
     } catch (err) {
+      console.log("LOGIN ERROR:", err.response?.data);
       setError("Invalid credentials");
     }
   };
@@ -44,9 +48,9 @@ const LoginPage = () => {
             </label>
             <input
               type="text"
-              value={credentials.username}
+              value={credentials.email}
               onChange={(e) =>
-                setCredentials({ ...credentials, username: e.target.value })
+                setCredentials({ ...credentials, email: e.target.value })
               }
               required
               className="w-full px-3.5 py-[11px] border border-gray-300 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition hover:border-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"

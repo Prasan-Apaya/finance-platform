@@ -1,21 +1,21 @@
 package com.finance.platform.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
+import java.util.Date;
+import java.util.function.Function;
+
+import javax.crypto.SecretKey;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.finance.platform.config.JwtAuthProperties;
 
-import javax.crypto.SecretKey;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtTokenProvider {
@@ -29,18 +29,14 @@ public class JwtTokenProvider {
     }
 
     public String generateToken(String userId, String email) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", userId);
-        claims.put("email", email);
-
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtAuthProperties.expirationMs());
 
         SecretKey key = getSigningKey();
 
         return Jwts.builder()
-                .claims(claims)
-                .subject(email)
+                .subject(String.valueOf("userId"))
+                .claim("email", email)
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .issuer(jwtAuthProperties.issuer())
@@ -52,9 +48,9 @@ public class JwtTokenProvider {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
-    public String getUserIdFromToken(String token) {
+    public Long getUserIdFromToken(String token) {
         Claims claims = getAllClaimsFromToken(token);
-        return claims.get("userId", String.class);
+        return Long.valueOf(claims.getSubject());
     }
 
     public Date getExpirationDateFromToken(String token) {
