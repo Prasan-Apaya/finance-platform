@@ -35,7 +35,7 @@ public class JwtTokenProvider {
         SecretKey key = getSigningKey();
 
         return Jwts.builder()
-                .subject(String.valueOf("userId"))
+                .subject(userId)
                 .claim("email", email)
                 .issuedAt(now)
                 .expiration(expiryDate)

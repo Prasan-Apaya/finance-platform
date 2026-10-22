@@ -1,3 +1,55 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark, .dark *, .dark-mode, .dark-mode *));
+
+@theme {
+  --color-primary: #f9fafb;
+  --color-primary_hover: #f3f4f6;
+  --color-secondary: #ffffff;
+  --color-secondary_hover: #f9fafb;
+  --color-secondary_contrast: #111827;
+  --color-tertiary: #6b7280;
+  --color-tertiary_hover: #374151;
+  --color-border-secondary: #e5e7eb;
+  --color-brand-solid: #4f46e5;
+  --color-brand-solid_hover: #4338ca;
+  --color-brand-secondary: #4f46e5;
+  --color-brand-secondary_hover: #4338ca;
+  --color-fg-brand-secondary_alt: #6366f1;
+  --color-fg-quaternary: #9ca3af;
+  --color-fg-quaternary_hover: #6b7280;
+  --color-error-solid: #ef4444;
+  --color-error-solid_hover: #dc2626;
+  --color-error-primary: #ef4444;
+  --color-error_subtle: #fee2e2;
+   --text-color-primary: #111827;
+  --text-color-secondary: #374151;
+  --text-color-tertiary: #6b7280;
+  --text-color-placeholder: #9ca3af;
+  --background-color-primary: #ffffff;
+  --background-color-secondary: #f9fafb;
+  --border-color-primary: #d1d5db;
+  --border-color-secondary: #e5e7eb;
+}
+
+.dark, .dark-mode {
+  --color-primary: #030712;
+  --color-primary_hover: #111827;
+  --color-secondary: #111827;
+  --color-secondary_hover: #1f2937;
+  --color-secondary_contrast: #f9fafb;
+  --color-tertiary: #9ca3af;
+  --color-tertiary_hover: #d1d5db;
+  --color-border-secondary: #1f2937;
+  --color-brand-solid: #6366f1;
+  --color-brand-solid_hover: #4f46e5;
+  --color-brand-secondary: #818cf8;
+  --color-brand-secondary_hover: #a5b4fc;
+  --color-fg-brand-secondary_alt: #a5b4fc;
+  --color-fg-quaternary: #6b7280;
+  --color-fg-quaternary_hover: #9ca3af;
+  --color-error-solid: #ef4444;
+  --color-error-solid_hover: #dc2626;
+  --color-error-primary: #f87171;
+  --color-error_subtle: #450a0a;
+}

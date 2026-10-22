@@ -1,15 +1,5 @@
-import { useAuth } from '../auth/AuthContext';
+import DashboardView from '../features/dashboard/DashboardView';
 
-const DashboardPage = () => {
-  const { user, logout } = useAuth();
-
-  return (
-    <div className="dashboard-page">
-      <h2>Dashboard</h2>
-      <p>Welcome, {user?.username}!</p>
-      <button onClick={logout}>Logout</button>
-    </div>
-  );
-};
-
-export default DashboardPage;
+export default function DashboardPage() {
+  return <DashboardView />;
+}
