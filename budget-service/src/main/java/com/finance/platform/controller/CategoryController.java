@@ -3,6 +3,7 @@ package com.finance.platform.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,26 +33,26 @@ public class CategoryController {
 	}
 
 	@GetMapping
-	public List<CategoryResponse> getCategories(@RequestParam @Positive Long userId) {
+	public List<CategoryResponse> getCategories(@AuthenticationPrincipal Long userId) {
 		return financeService.getCategories(userId);
 	}
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public CategoryResponse createCategory(@RequestParam @Positive Long userId,
+	public CategoryResponse createCategory(@AuthenticationPrincipal Long userId,
 			@Valid @RequestBody CategoryRequest request) {
 		return financeService.createCategory(userId, request);
 	}
 
 	@PutMapping("/{id}")
-	public CategoryResponse updateCategory(@RequestParam @Positive Long userId,
+	public CategoryResponse updateCategory(@AuthenticationPrincipal Long userId,
 			@PathVariable @Positive Long id, @Valid @RequestBody CategoryRequest request) {
 		return financeService.updateCategory(userId, id, request);
 	}
 
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void deleteCategory(@RequestParam @Positive Long userId, @PathVariable @Positive Long id) {
+	public void deleteCategory(@AuthenticationPrincipal Long userId, @PathVariable @Positive Long id) {
 		financeService.deleteCategory(userId, id);
 	}
 }

@@ -7,6 +7,9 @@ import DashboardPage from "./pages/DashboardPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import RootRedirect from "./auth/RootRedirect";
+import TransactionsPage from "./pages/TransactionsPage";
+import BudgetsPage from "./pages/BudgetsPage";
+import CategoriesPage from "./pages/CategoriesPage";
 
 function App() {
   return (
@@ -23,19 +26,14 @@ function App() {
             }
           >
             <Route path="/dashboard" element={<DashboardPage />} />
-            <Route
-              path="/transactions"
-              element={
-                <div className="p-4">Transactions page (placeholder)</div>
-              }
-            />
+            <Route path="/transactions" element={<TransactionsPage />} />
             <Route
               path="/budgets"
-              element={<div className="p-4">Budgets page (placeholder)</div>}
+              element={<BudgetsPage />}
             />
             <Route
               path="/categories"
-              element={<div className="p-4">Categories page (placeholder)</div>}
+              element={<CategoriesPage />}
             />
           </Route>
           <Route path="/" element={<RootRedirect />} />{" "}
