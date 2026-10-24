@@ -22,7 +22,7 @@
   --color-error-solid_hover: #dc2626;
   --color-error-primary: #ef4444;
   --color-error_subtle: #fee2e2;
-   --text-color-primary: #111827;
+  --text-color-primary: #111827;
   --text-color-secondary: #374151;
   --text-color-tertiary: #6b7280;
   --text-color-placeholder: #9ca3af;
@@ -32,7 +32,8 @@
   --border-color-secondary: #e5e7eb;
 }
 
-.dark, .dark-mode {
+.dark,
+.dark-mode {
   --color-primary: #030712;
   --color-primary_hover: #111827;
   --color-secondary: #111827;

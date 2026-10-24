@@ -95,7 +95,7 @@ export default function CategoriesPage() {
         </div>
         <button
           onClick={openAddModal}
-          className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90"
+          className="inline-flex items-center gap-2 rounded-lg bg-brand-solid px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-solid/90"
         >
           <Plus className="w-4 h-4" /> Add category
         </button>
@@ -109,7 +109,7 @@ export default function CategoriesPage() {
           <p className="text-gray-500 mb-4">No categories yet</p>
           <button
             onClick={openAddModal}
-            className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white"
+            className="inline-flex items-center gap-2 rounded-lg bg-brand-solid px-4 py-2 text-sm font-semibold text-white"
           >
             <Plus className="w-4 h-4" /> Add category
           </button>
@@ -182,7 +182,7 @@ export default function CategoriesPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-4 py-2 text-sm font-semibold text-white bg-primary hover:bg-primary/90 rounded-lg disabled:opacity-50"
+                  className="px-4 py-2 text-sm font-semibold text-white bg-brand-solid hover:bg-brand-solid/90 rounded-lg disabled:opacity-50"
                 >
                   {editingCategory ? 'Save Changes' : 'Create Category'}
                 </button>
