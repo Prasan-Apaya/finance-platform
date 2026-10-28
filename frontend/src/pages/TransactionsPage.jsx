@@ -16,6 +16,21 @@ export default function TransactionsPage() {
   const [editingTransaction, setEditingTransaction] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [menuPosition, setMenuPosition] = useState(null);
+
+  const handleMenuToggle = (e, txId) => {
+    if (openMenuId === txId) {
+      setOpenMenuId(null);
+      setMenuPosition(null);
+    } else {
+      const rect = e.currentTarget.getBoundingClientRect();
+      setOpenMenuId(txId);
+      setMenuPosition({
+        top: rect.bottom + window.scrollY,
+        right: window.innerWidth - rect.right + window.scrollX,
+      });
+    }
+  };
 
   const month = searchParams.get('month') || getCurrentMonth();
   const categoryId = searchParams.get('categoryId') || '';
@@ -246,10 +261,11 @@ export default function TransactionsPage() {
           )}
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-xs overflow-hidden">
+        <div className="bg-white rounded-xl border border-gray-200 shadow-xs">
           {/* Desktop Table */}
-          <div className="hidden sm:block overflow-x-auto">
-            <table className="w-full">
+          <div className="hidden sm:block overflow-x-visible">
+            <div className="overflow-x-auto">
+            <table className="w-full relative">
               <thead className="border-b border-gray-200 bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
@@ -287,26 +303,43 @@ export default function TransactionsPage() {
                       <td className="px-6 py-4 text-right">
                         <div className="relative inline-block">
                           <button
-                            onClick={() => setOpenMenuId(openMenuId === tx.id ? null : tx.id)}
+                            onClick={(e) => handleMenuToggle(e, tx.id)}
                             className="p-1 text-gray-400 hover:text-gray-600 rounded"
                           >
                             <DotsVertical className="w-5 h-5" />
                           </button>
-                          {openMenuId === tx.id && (
+                          {openMenuId === tx.id && menuPosition && (
                             <>
                               <div
-                                className="fixed inset-0 z-10"
-                                onClick={() => setOpenMenuId(null)}
+                                className="fixed inset-0 z-40"
+                                onClick={() => {
+                                  setOpenMenuId(null);
+                                  setMenuPosition(null);
+                                }}
                               />
-                              <div className="absolute right-0 mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
+                              <div
+                                style={{
+                                  top: `${menuPosition.top}px`,
+                                  right: `${menuPosition.right}px`,
+                                }}
+                                className="fixed w-40 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50"
+                              >
                                 <button
-                                  onClick={() => handleOpenEditForm(tx)}
+                                  onClick={() => {
+                                    setOpenMenuId(null);
+                                    setMenuPosition(null);
+                                    handleOpenEditForm(tx);
+                                  }}
                                   className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                                 >
                                   <Edit02 className="w-4 h-4" /> Edit
                                 </button>
                                 <button
-                                  onClick={() => handleOpenDeleteDialog(tx)}
+                                  onClick={() => {
+                                    setOpenMenuId(null);
+                                    setMenuPosition(null);
+                                    handleOpenDeleteDialog(tx);
+                                  }}
                                   className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
                                 >
                                   <Trash01 className="w-4 h-4" /> Delete
@@ -321,6 +354,7 @@ export default function TransactionsPage() {
                 })}
               </tbody>
             </table>
+            </div>
           </div>
 
           {/* Mobile Cards */}
@@ -337,23 +371,43 @@ export default function TransactionsPage() {
                     </div>
                     <div className="relative">
                       <button
-                        onClick={() => setOpenMenuId(openMenuId === tx.id ? null : tx.id)}
+                        onClick={(e) => handleMenuToggle(e, tx.id)}
                         className="p-1 text-gray-400 hover:text-gray-600"
                       >
                         <DotsVertical className="w-5 h-5" />
                       </button>
-                      {openMenuId === tx.id && (
+                      {openMenuId === tx.id && menuPosition && (
                         <>
-                          <div className="fixed inset-0 z-10" onClick={() => setOpenMenuId(null)} />
-                          <div className="absolute right-0 mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
+                          <div
+                            className="fixed inset-0 z-40"
+                            onClick={() => {
+                              setOpenMenuId(null);
+                              setMenuPosition(null);
+                            }}
+                          />
+                          <div
+                            style={{
+                              top: `${menuPosition.top}px`,
+                              right: `${menuPosition.right}px`,
+                            }}
+                            className="fixed w-40 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50"
+                          >
                             <button
-                              onClick={() => handleOpenEditForm(tx)}
+                              onClick={() => {
+                                setOpenMenuId(null);
+                                setMenuPosition(null);
+                                handleOpenEditForm(tx);
+                              }}
                               className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                             >
                               <Edit02 className="w-4 h-4" /> Edit
                             </button>
                             <button
-                              onClick={() => handleOpenDeleteDialog(tx)}
+                              onClick={() => {
+                                setOpenMenuId(null);
+                                setMenuPosition(null);
+                                handleOpenDeleteDialog(tx);
+                              }}
                               className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
                             >
                               <Trash01 className="w-4 h-4" /> Delete
