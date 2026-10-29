@@ -1,6 +1,6 @@
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useSummary } from '../../hooks/useSummary';
-import { useBudgetStatus } from '../../hooks/useBudgetStatus';
+import { useBudgetStatus } from '../../features/budgets/hooks';
 import { useRecentTransactions } from '../../hooks/useRecentTransactions';
 import { getCurrentMonth, formatMonth, formatCurrency } from '../../lib/format';
 import MonthSwitcher from './MonthSwitcher';
@@ -12,6 +12,7 @@ import RecentTransactions from './RecentTransactions';
 
 export default function DashboardView() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const urlMonth = searchParams.get('month') || getCurrentMonth();
 
   const summaryQuery = useSummary(urlMonth);
@@ -24,6 +25,10 @@ export default function DashboardView() {
 
   const handleMonthChange = (month) => {
     setSearchParams({ month }, { replace: true });
+  };
+
+  const handleViewAllBudgets = () => {
+    navigate('/budgets');
   };
 
   const isLoading = summaryQuery.isPending || budgetQuery.isPending || transactionsQuery.isPending;
@@ -117,9 +122,9 @@ export default function DashboardView() {
       <div className="bg-secondary border border-border-secondary rounded-xl p-4">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-sm font-semibold text-secondary">Budgets</h3>
-          <button onClick={() => {}} className="text-xs text-brand-solid underline">Manage Budgets</button>
+          <button onClick={handleViewAllBudgets} className="text-xs text-brand-solid underline">Manage Budgets</button>
         </div>
-        <BudgetSection items={budgetItems} onViewAll={() => {}} />
+        <BudgetSection items={budgetItems} onViewAll={handleViewAllBudgets} />
       </div>
 
       <div className="bg-secondary border border-border-secondary rounded-xl p-4">

@@ -4,6 +4,7 @@ import java.time.YearMonth;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,34 +35,33 @@ public class BudgetController {
 	}
 
 	@GetMapping
-	public List<BudgetResponse> getBudgets(@RequestParam @Positive Long userId,
+	public List<BudgetResponse> getBudgets(@AuthenticationPrincipal Long userId,
 			@RequestParam(required = false) YearMonth month) {
 		return financeService.getBudgets(userId, java.util.Optional.ofNullable(month));
 	}
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public BudgetResponse createBudget(@RequestParam @Positive Long userId,
+	public BudgetResponse createBudget(@AuthenticationPrincipal Long userId,
 			@Valid @RequestBody BudgetRequest request) {
 		return financeService.createBudget(userId, request);
 	}
 
 	@PutMapping("/{id}")
-	public BudgetResponse updateBudget(@RequestParam @Positive Long userId,
+	public BudgetResponse updateBudget(@AuthenticationPrincipal Long userId,
 			@PathVariable @Positive Long id, @Valid @RequestBody BudgetRequest request) {
 		return financeService.updateBudget(userId, id, request);
 	}
 
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void deleteBudget(@RequestParam @Positive Long userId, @PathVariable @Positive Long id) {
+	public void deleteBudget(@AuthenticationPrincipal Long userId, @PathVariable @Positive Long id) {
 		financeService.deleteBudget(userId, id);
 	}
 
 	@GetMapping("/status")
-	public BudgetStatusResponse getBudgetStatus(@RequestParam @Positive Long userId,
+	public BudgetStatusResponse getBudgetStatus(@AuthenticationPrincipal Long userId,
 			@RequestParam YearMonth month) {
 		return financeService.getBudgetStatus(userId, month);
 	}
-
 }
