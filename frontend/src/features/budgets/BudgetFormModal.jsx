@@ -14,7 +14,7 @@ const budgetSchema = z.object({
 });
 
 export default function BudgetFormModal({ isOpen, onClose, onSubmit, budget, isSubmitting, existingCategoryIds }) {
-  const { data: categories } = useCategories();
+  const { data: categories, isLoading: categoriesLoading } = useCategories();
   const [hint, setHint] = useState('');
 
   const {
@@ -67,6 +67,16 @@ export default function BudgetFormModal({ isOpen, onClose, onSubmit, budget, isS
 
   if (!isOpen) return null;
 
+  if (categoriesLoading) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-xl">
+          <p className="text-center text-gray-600">Loading categories...</p>
+        </div>
+      </div>
+    );
+  }
+
   // Build options from categories that don't have budgets yet (for add mode) or all categories (for edit)
   const categoryOptions = categories?.filter((c) => {
     if (budget) return c.id === budget.categoryId;
@@ -99,18 +109,23 @@ export default function BudgetFormModal({ isOpen, onClose, onSubmit, budget, isS
               </div>
             ) : (
               <>
-                <select
-                  {...register('categoryId')}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary"
-                  disabled={categoryOptions.length === 0}
-                >
-                  <option value="">Select a category</option>
-                  {categoryOptions.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
+                {categoryOptions.length > 0 ? (
+                  <select
+                    {...register('categoryId')}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    <option value="">Select a category</option>
+                    {categoryOptions.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <div className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-500 bg-gray-50">
+                    No categories available for budgeting this month
+                  </div>
+                )}
                 {hint && <p className="text-sm text-gray-500 mt-1">{hint}</p>}
                 {errors.categoryId && (
                   <p className="text-sm text-red-600 mt-1">{errors.categoryId.message}</p>

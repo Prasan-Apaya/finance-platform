@@ -44,6 +44,13 @@ export function useBudgetStatus(month, options = {}) {
       const totalRemaining = Number(data.totalRemaining || 0);
       const overallPercentUsed = totalLimit > 0 ? (totalSpent / totalLimit) * 100 : 0;
 
+      console.log('Budget Status Response:', {
+        items,
+        totalLimit,
+        totalSpent,
+        totalRemaining,
+        percentUsed: overallPercentUsed,
+      });
       return {
         items,
         totalLimit,
@@ -56,14 +63,6 @@ export function useBudgetStatus(month, options = {}) {
     ...options,
   });
 }
-
-// export function useBudgetStatus(month) {
-//   return useQuery({
-//     queryKey: keys.budgetStatus(month),
-//     queryFn: () => getBudgetStatus(month).then((res) => res.data),
-//     placeholderData: (previous) => previous,
-//   });
-// }
 
 export function useCreateBudget() {
   const queryClient = useQueryClient();

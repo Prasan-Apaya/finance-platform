@@ -164,7 +164,8 @@ public class FinanceService {
 							field(fields, columns, "type").toUpperCase());
 					LocalDate date = LocalDate.parse(field(fields, columns, "date"));
 					String note = columns.containsKey("note")
-							? optionalField(fields, columns, "note") : null;
+							? optionalField(fields, columns, "note")
+							: null;
 					if (amount.signum() <= 0) {
 						throw new IllegalArgumentException("amount must be greater than zero");
 					}
@@ -229,10 +230,11 @@ public class FinanceService {
 		requireUser(userId);
 		List<Budget> budgets = budgetRepository
 				.findAllByUserIdAndMonthOrderByCategoryNameAsc(userId, month);
+
 		Map<Long, BigDecimal> spentByCategory = new HashMap<>();
 		transactionRepository.findAllByUserIdAndDateBetweenAndType(userId, month.atDay(1),
-				month.atEndOfMonth(), TransactionType.EXPENSE).forEach(transaction ->
-						spentByCategory.merge(transaction.getCategory().getId(), transaction.getAmount(),
+				month.atEndOfMonth(), TransactionType.EXPENSE).forEach(
+						transaction -> spentByCategory.merge(transaction.getCategory().getId(), transaction.getAmount(),
 								BigDecimal::add));
 
 		List<BudgetStatusItem> items = budgets.stream().map(budget -> {
