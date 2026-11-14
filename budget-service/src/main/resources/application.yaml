@@ -23,6 +23,10 @@ jwt:
     expiration-ms: 86400000  # 24 hours
     issuer: platform-service
 
+forecast:
+  base-url: ${FORECAST_URL:http://localhost:8001}
+  internal-key: ${FORECAST_INTERNAL_KEY}
+
   # security:
   #   oauth2:
   #     resourceserver:
