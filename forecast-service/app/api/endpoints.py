@@ -4,9 +4,9 @@ import secrets
 from fastapi import APIRouter, HTTPException, status , Header , Depends
 from app.schemas.forecast import ForecastRequest, ForecastResponse, HealthResponse
 from app.services.forecaster import forecaster
+from app.core.config import settings
 
 router = APIRouter(tags=["Forecasting"])
-EXPECTED_KEY = os.getenv("FORECAST_INTERNAL_KEY")
 
 
 @router.get(
@@ -20,7 +20,7 @@ async def health_check() -> HealthResponse:
 
 def verify_internal_key(x_internal_key: str = Header(...)):
     # Use compare_digest to prevent timing attacks
-    if not EXPECTED_KEY or not secrets.compare_digest(x_internal_key, EXPECTED_KEY):
+    if not secrets.compare_digest(x_internal_key, settings.INTERNAL_KEY):
         raise HTTPException(status_code=403, detail="Invalid internal key")
 
 

@@ -8,6 +8,7 @@ import json
 class Settings(BaseSettings):
     APP_NAME: str = "forecast-service"
     APP_ENV: str = "development"
+    INTERNAL_KEY: str
     DEBUG: bool = True
     HOST: str = "0.0.0.0"
     PORT: int = 8001
@@ -24,6 +25,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
+        env_prefix="FORECAST_",
         case_sensitive=True,
         extra="ignore",
     )
