@@ -27,4 +27,8 @@ public interface BudgetRepository extends JpaRepository<Budget, Long> {
 	@Query("select case when count(b) > 0 then true else false end "
 			+ "from Budget b where b.category.id = :categoryId")
 	boolean existsByCategoryId(@Param("categoryId") Long categoryId);
+
+	@Query("select b from Budget b where b.category.id = :categoryId "
+			+ "order by b.month asc")
+	List<Budget> findHistoricalDataByCategoryId(@Param("categoryId") Long categoryId);
 }
