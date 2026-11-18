@@ -2,32 +2,30 @@ package com.finance.platform.client;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.reactive.function.client.WebClient;
 
-import com.finance.platform.config.ForecastProperties;
 import com.finance.platform.dto.ForecastRequest;
 import com.finance.platform.dto.ForecastResponse;
 import com.finance.platform.exceptions.ForecastUnavailableException;
 
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Mono;
 
 @Component
 @RequiredArgsConstructor
 public class ForecastClient {
 
-    private final RestClient forecastRestClient;
-    private final ForecastProperties props;
+    private WebClient webClient;
 
-    public ForecastResponse forecast(ForecastRequest request) {
+    public Mono<ForecastResponse> forecast(ForecastRequest request) {
         try {
-            return forecastRestClient.post()
-                    .uri("/forecast")
-                    .header("X-Internal-Key", props.internalKey())
+            return webClient.post()
+                    .uri("/predict")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(request)
+                    .bodyValue(request)
                     .retrieve()
-                    .body(ForecastResponse.class);
+                    .bodyToMono(ForecastResponse.class);
         } catch (RestClientException e) {
             throw new ForecastUnavailableException("Forecast service unavailable", e);
         }

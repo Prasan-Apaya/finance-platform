@@ -23,8 +23,16 @@ jwt:
     expiration-ms: 86400000  # 24 hours
     issuer: platform-service
 
+logging:
+  level:
+    root: INFO
+    com.finance.platform: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.web: DEBUG
+
 forecast:
-  base-url: ${FORECAST_URL:http://localhost:8001}
+  base-url: ${FORECAST_URL:http://localhost:8000}
   internal-key: ${FORECAST_INTERNAL_KEY}
 
   # security:

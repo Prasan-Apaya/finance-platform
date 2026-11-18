@@ -11,6 +11,8 @@ import com.finance.platform.dto.ForecastResponse;
 import com.finance.platform.dto.FrontendForecastRequest;
 import com.finance.platform.service.ForecastService;
 
+import reactor.core.publisher.Mono;
+
 @RestController
 @RequestMapping("/api/forecast")
 public class ForecastController {
@@ -22,8 +24,8 @@ public class ForecastController {
     }
 
     @PostMapping("/predict")
-    public ResponseEntity<ForecastResponse> getForecast(@AuthenticationPrincipal Long id,
+    public Mono<ResponseEntity<ForecastResponse>> getForecast(@AuthenticationPrincipal Long id,
             @RequestBody FrontendForecastRequest frontEndRequest) {
-        return forecastService.requestForecast(frontEndRequest);
+        return forecastService.requestForecast(frontEndRequest).map(ResponseEntity::ok);
     }
 }

@@ -37,7 +37,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 			+ "from Transaction t where t.category.id = :categoryId")
 	boolean existsByCategoryId(@Param("categoryId") Long categoryId);
 
-	@Query("select t from Transaction t where t.category.id = :categoryId "
+	@Query("select t from Transaction t join fetch t.category where t.category.id = :categoryId "
 			+ "order by t.date asc")
-	Collection<Transaction> findTransactionHistoryByCategoryId(Long categoryId);
+	Collection<Transaction> findTransactionHistoryByCategoryId(@Param("categoryId") Long categoryId);
 }
